@@ -9,7 +9,7 @@ describe("Lottery Contract", () => {
 
   beforeEach(async () => {
     // 1. Get the accounts from Hardhat
-    [owner, addr1] = await ethers.getSigners();
+    [owner, addr1, addr2] = await ethers.getSigners();
 
     // 2. Get the Contract Factory
     // Hardhat looks for the "Lottery" contract in your artifacts folder automatically
@@ -35,5 +35,20 @@ describe("Lottery Contract", () => {
     const players = await lottery.getPlayers();
     expect(players[0]).to.equal(addr1.address);
     expect(players.length).to.equal(1);
+  });
+
+  it("allows multiple accounts to enter", async () => {
+    await lottery.connect(addr1).enter({ 
+      value: ethers.parseEther("0.02") 
+    });
+    
+    await lottery.connect(addr2).enter({ 
+      value: ethers.parseEther("0.02") 
+    });
+
+    const players = await lottery.getPlayers();
+    expect(players[0]).to.equal(addr1.address);
+    expect(players[1]).to.equal(addr2.address);
+    expect(players.length).to.equal(2);
   });
 });
