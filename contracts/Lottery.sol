@@ -20,7 +20,7 @@ contract Lottery {
     //allows the user to join
     function enter() public payable { //public because we want to allow anyone to call this function
         //in order to enter, we have to send some amount of ether, hence, "payable" function
-        require(msg.value > .01 ether, "Minimum contribution is 0.01 Ether"); //used for validation
+        require(msg.value > .01 ether, "Minimum ether required to enter is 0.01"); //used for validation
         players.push(payable(msg.sender)); //convert the sender’s address into a payable address
     }
 
@@ -43,7 +43,7 @@ contract Lottery {
     }
 
     modifier OnlyManager() {
-        require(msg.sender == manager);
+        require(msg.sender == manager, "Only the manager can call this function");
         _;
     }
 

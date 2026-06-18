@@ -51,4 +51,20 @@ describe("Lottery Contract", () => {
     expect(players[1]).to.equal(addr2.address);
     expect(players.length).to.equal(2);
   });
+
+  it('requires a minimum amount of ether to enter', async () => {
+    await expect(
+      lottery.connect(addr1).enter({ value: ethers.parseEther("0.001") })
+    ).to.be.revertedWith("Minimum ether required to enter is 0.01");
+  });
+
+  it('only allows the manager to pick a winner', async () => {
+    await lottery.connect(addr1).enter({ 
+      value: ethers.parseEther("0.02") 
+    });
+
+    await expect(
+      lottery.connect(addr1).pickWinner()
+    ).to.be.revertedWith("Only the manager can call this function");
+  });
 });
