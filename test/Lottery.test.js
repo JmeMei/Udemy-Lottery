@@ -67,4 +67,22 @@ describe("Lottery Contract", () => {
       lottery.connect(addr1).pickWinner()
     ).to.be.revertedWith("Only the manager can call this function");
   });
+
+  it('sends money to the winner and resets the players array', async () => {
+    await lottery.connect(addr1).enter({ 
+      value: ethers.parseEther("2") 
+    });
+
+    const initialBalance = await addr1.getBalance();
+
+    await lottery.connect(owner).pickWinner();
+
+    const finalBalance = await addr1.getBalance();
+    const difference = finalBalance - initialBalance;
+
+    expect(difference).to.be.closeTo(ethers.parseEther("2"), ethers.parseEther("0.01"));
+
+    const players = await lottery.getPlayers();
+    expect(players.length).to.equal(0);
+  });
 });
