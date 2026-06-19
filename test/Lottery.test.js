@@ -73,12 +73,15 @@ describe("Lottery Contract", () => {
       value: ethers.parseEther("2") 
     });
 
-    const initialBalance = await addr1.getBalance();
+    const initialBalance = await ethers.provider.getBalance(addr1.address);
 
     await lottery.connect(owner).pickWinner();
 
-    const finalBalance = await addr1.getBalance();
+    const finalBalance = await ethers.provider.getBalance(addr1.address);
     const difference = finalBalance - initialBalance;
+
+    console.log("Difference in Wei:", difference.toString());
+    console.log("Expected in Wei:", ethers.parseEther("2").toString());
 
     expect(difference).to.be.closeTo(ethers.parseEther("2"), ethers.parseEther("0.01"));
 
